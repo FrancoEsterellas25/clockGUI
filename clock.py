@@ -19,11 +19,14 @@ my_schedule = {
 def isinclass():
     now= dt.datetime.today()
     day= now.strftime("%A")
-    hour= now.strftime("%H:%M")
+    hour= now.time()
 
     if day in my_schedule:
         for start_class, end_class, class_name in my_schedule[day]:
-            if hour > start_class and hour < end_class:
+            start = dt.datetime.strptime(start_class, "%H:%M").time()
+            end = dt.datetime.strptime(end_class, "%H:%M").time()
+
+            if hour > start and hour < end:
                 return True, class_name
 
     return False, ""
@@ -35,14 +38,23 @@ def showyellow():
         tag2.config(bg="#d9af2f",fg="#E4D593")
         tagdate.config(bg="#d9af2f",fg="#E4D593")
         tagclass.config(text=f"En clase {subject}...",bg="#d9af2f",fg="#E4D593")
+        window.configure(bg="#d9af2f")
     else:
         tag2.config(bg="#022001",fg="#356433")
         tagdate.config(bg="#022001",fg="#356433")
         tagclass.pack_forget()
-        window.geometry("600x110")
+        window.geometry("600x150")
+        window.configure(bg="#022001")
 
     window.after(5000, showyellow)
 
+def go_sleep():
+    window.geometry("600x218")
+    tag2.config(bg="#151939", fg="#afbfff")
+    tagdate.config(bg="#151939", fg="#afbfff")
+    tagclass.config(text="Durmiendo... zzz", bg="#151939", fg="#afbfff")
+    tagclass.pack(fill=tk.X)
+    window.configure(bg="#151939")
 
 
 def getTime():
@@ -55,8 +67,9 @@ def getDay():
     return printed_date
 
 window= tk.Tk()
+window.configure(bg="#022001")
 
-window.geometry("600x138")
+window.geometry("600x158")
 
 window.title('Clock 4 Focus')
 
@@ -67,6 +80,9 @@ tagdate.pack(fill=tk.X)
 
 tagclass= tk.Label(window, text="", fg="#022001", font=("Helvetica",15))
 tagclass.pack(fill=tk.X)
+
+sleepbuton= tk.Button(text="Go sleep", command= go_sleep, bg="white")
+sleepbuton.pack(side="bottom", pady=10)
 
 update_time()
 showyellow()
